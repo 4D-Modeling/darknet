@@ -235,9 +235,52 @@ image **load_alphabet()
     return alphabets;
 }
 
-void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, int saveObjects)
+void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, int saveObjects, char *filename)
 {
     int i,j;
+    //#################################################################
+    // RAMIN:Save the object in the bounding box
+    if (saveObjects) {
+        for(i = 0; i < num; ++i){
+            char labelstr1[4096] = {0};
+            int class1 = -1;
+            for(j = 0; j < classes; ++j){
+                if (probs[i][j] > thresh){
+                    if (class1 < 0) {
+                        strcat(labelstr1, names[j]);
+                        class1 = j;
+                    } else {
+                        strcat(labelstr1, ", ");
+                        strcat(labelstr1, names[j]);
+                    }
+                }
+            }
+            if(class1 >= 0){
+                box b = boxes[i];
+
+                int left  = (b.x-b.w/2.)*im.w;
+                int right = (b.x+b.w/2.)*im.w;
+                int top   = (b.y-b.h/2.)*im.h;
+                int bot   = (b.y+b.h/2.)*im.h;
+
+                if(left < 0) left = 0;
+                if(right > im.w-1) right = im.w-1;
+                if(top < 0) top = 0;
+                if(bot > im.h-1) bot = im.h-1;
+
+                // printf("RawBox: %f, %f, %f, %f\n", b.x, b.y,b.w, b.h);
+                // printf("Box: %f, %f, %f, %f\n", left, top, b.w*im.w, b.h*im.h);
+                char name[1096];
+                sprintf(name, "_%d", i);
+                strcat(labelstr1, name);
+                //image croppedObject = crop_image(im, b.x*im.w, b.y*im.h, b.w*im.w, b.h*im.h);
+                image croppedObject = crop_image(im, left, top, b.w*im.w, b.h*im.h);
+                save_image(croppedObject, labelstr1);
+                free_image(croppedObject);
+            }
+        }
+    }
+    //#################################################################
 
     for(i = 0; i < num; ++i){
         char labelstr[4096] = {0};
@@ -304,17 +347,17 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
                 free_image(tmask);
             }
 
-            // RAMIN:Save the object in the bounding box
-            if (saveObjects) {
-                printf("RawBox: %f, %f, %f, %f\n", b.x, b.y,b.w, b.h);
-                printf("Box: %f, %f, %f, %f\n", left, top, b.w*im.w, b.h*im.h);
-                char name[4096];
-                sprintf(name, "%d", i);
-                //image croppedObject = crop_image(im, b.x*im.w, b.y*im.h, b.w*im.w, b.h*im.h);
-                image croppedObject = crop_image(im, left, top, b.w*im.w, b.h*im.h);
-                save_image(croppedObject, name);
-                free_image(croppedObject);
-            }
+            // // RAMIN:Save the object in the bounding box
+            // if (saveObjects) {
+            //     printf("RawBox: %f, %f, %f, %f\n", b.x, b.y,b.w, b.h);
+            //     printf("Box: %f, %f, %f, %f\n", left, top, b.w*im.w, b.h*im.h);
+            //     char name[4096];
+            //     sprintf(name, "%d", i);
+            //     //image croppedObject = crop_image(im, b.x*im.w, b.y*im.h, b.w*im.w, b.h*im.h);
+            //     image croppedObject = crop_image(im, left, top, b.w*im.w, b.h*im.h);
+            //     save_image(croppedObject, name);
+            //     free_image(croppedObject);
+            // }
 
         }
     }
