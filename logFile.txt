@@ -1,0 +1,12 @@
+-Call stack to the function finding the bounding boxes:
+	darknet.c -> test_detector -> get_region_boxes()
+ Path:
+	source/region_layer.c -> get_region_boxes()
+
+-Function drawing the detections:
+	image.c -> draw_detections()
+ Call stack:
+	detector.c -> test_detector() -> draw_detections()
+
+-Cropping image:
+	image.c -> crop_image()
