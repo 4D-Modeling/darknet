@@ -562,7 +562,7 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
     }
 }
 
-void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
+void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, char *outFolder, float thresh, float hier_thresh, char *outfile, int fullscreen)
 {
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
@@ -612,8 +612,8 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         //else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         int saveObjects = 1;
-        char fileName[1]={0};
-        draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, masks, names, alphabet, l.classes, saveObjects, fileName);
+        char outputFolder[1]={0};
+        draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, masks, names, alphabet, l.classes, saveObjects, outFolder);
 
 
         // Crop the bounding boxes and save the cropped image
@@ -646,6 +646,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
 void run_detector(int argc, char **argv)
 {
     char *prefix = find_char_arg(argc, argv, "-prefix", 0);
+    // char *outFolder = find_char_arg(argc, argv, "-out_folder", 0);
     float thresh = find_float_arg(argc, argv, "-thresh", .24);
     float hier_thresh = find_float_arg(argc, argv, "-hier", .5);
     int cam_index = find_int_arg(argc, argv, "-c", 0);
@@ -689,7 +690,8 @@ void run_detector(int argc, char **argv)
     char *cfg = argv[4];
     char *weights = (argc > 5) ? argv[5] : 0;
     char *filename = (argc > 6) ? argv[6]: 0;
-    if(0==strcmp(argv[2], "test")) test_detector(datacfg, cfg, weights, filename, thresh, hier_thresh, outfile, fullscreen);
+    char *outFolder = (argc > 7) ? argv[7]: 0;
+    if(0==strcmp(argv[2], "test")) test_detector(datacfg, cfg, weights, filename, outFolder, thresh, hier_thresh, outfile, fullscreen);
     else if(0==strcmp(argv[2], "train")) train_detector(datacfg, cfg, weights, gpus, ngpus, clear);
     else if(0==strcmp(argv[2], "valid")) validate_detector(datacfg, cfg, weights, outfile);
     else if(0==strcmp(argv[2], "valid2")) validate_detector_flip(datacfg, cfg, weights, outfile);

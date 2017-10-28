@@ -235,7 +235,7 @@ image **load_alphabet()
     return alphabets;
 }
 
-void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, int saveObjects, char *filename)
+void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, int saveObjects, char *outFolder)
 {
     int i,j;
     //#################################################################
@@ -257,6 +257,8 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             }
             if(class1 >= 0){
                 box b = boxes[i];
+                char * copy = malloc(strlen(outFolder) + 1);
+                strcpy(copy, outFolder);
 
                 int left  = (b.x-b.w/2.)*im.w;
                 int right = (b.x+b.w/2.)*im.w;
@@ -273,10 +275,13 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
                 char name[1096];
                 sprintf(name, "_%d", i);
                 strcat(labelstr1, name);
+                strcat(copy,labelstr1);
+                // printf("Filename: %s\n", copy);
                 //image croppedObject = crop_image(im, b.x*im.w, b.y*im.h, b.w*im.w, b.h*im.h);
                 image croppedObject = crop_image(im, left, top, b.w*im.w, b.h*im.h);
-                save_image(croppedObject, labelstr1);
+                save_image(croppedObject, copy);
                 free_image(croppedObject);
+                free(copy);
             }
         }
     }
