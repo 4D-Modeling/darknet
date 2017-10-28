@@ -330,7 +330,9 @@ void test_coco(char *cfgfile, char *weightfile, char *filename, float thresh)
         printf("%s: Predicted in %f seconds.\n", input, sec(clock()-time));
         get_detection_boxes(l, 1, 1, thresh, probs, boxes, 0);
         if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
-        draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, 0, coco_classes, alphabet, 80, 0);
+        //TODO: change the following line: get the filename from input
+        char fileName[1] = {0};
+        draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, 0, coco_classes, alphabet, 80, 0, fileName);
         save_image(im, "prediction");
         show_image(im, "predictions");
         free_image(im);
