@@ -562,7 +562,7 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
     }
 }
 
-void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, char *outFolder, float thresh, float hier_thresh, char *outfile, int fullscreen)
+void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, char* outFolder, float thresh, float hier_thresh, char *outfile, int fullscreen)
 {
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
@@ -658,6 +658,7 @@ void run_detector(int argc, char **argv)
     }
     char *gpu_list = find_char_arg(argc, argv, "-gpus", 0);
     char *outfile = find_char_arg(argc, argv, "-out", 0);
+    char *outFolder = find_char_arg(argc, argv, "-outFolder", 0);
     int *gpus = 0;
     int gpu = 0;
     int ngpus = 0;
@@ -690,7 +691,6 @@ void run_detector(int argc, char **argv)
     char *cfg = argv[4];
     char *weights = (argc > 5) ? argv[5] : 0;
     char *filename = (argc > 6) ? argv[6]: 0;
-    char *outFolder = (argc > 7) ? argv[7]: 0;
     if(0==strcmp(argv[2], "test")) test_detector(datacfg, cfg, weights, filename, outFolder, thresh, hier_thresh, outfile, fullscreen);
     else if(0==strcmp(argv[2], "train")) train_detector(datacfg, cfg, weights, gpus, ngpus, clear);
     else if(0==strcmp(argv[2], "valid")) validate_detector(datacfg, cfg, weights, outfile);
