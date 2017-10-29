@@ -2,7 +2,9 @@
 #include "utils.h"
 #include "blas.h"
 #include "cuda.h"
-#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdlib.h>
 #include <math.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -237,6 +239,7 @@ image **load_alphabet()
 
 void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes, int saveObjects, char *outFolder)
 {
+    srand(time(NULL));
     int i,j;
     //#################################################################
     // RAMIN:Save the object in the bounding box
@@ -272,16 +275,22 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
 
                 // printf("RawBox: %f, %f, %f, %f\n", b.x, b.y,b.w, b.h);
                 // printf("Box: %f, %f, %f, %f\n", left, top, b.w*im.w, b.h*im.h);
-                char name[1096];
-                sprintf(name, "_%d", i);
+                char name[4096];
+                // time_t rawtime;
+                // rawtime = time(NULL);
+                int r = rand()%(10000-0 + 1);
+                // sprintf(name, "_%ld", rawtime);
+                sprintf(name, "_%d", r);
                 strcat(labelstr1, name);
                 strcat(copy,labelstr1);
                 // printf("Filename: %s\n", copy);
                 //image croppedObject = crop_image(im, b.x*im.w, b.y*im.h, b.w*im.w, b.h*im.h);
                 image croppedObject = crop_image(im, left, top, b.w*im.w, b.h*im.h);
+                printf("Cropped\n");
                 save_image(croppedObject, copy);
-                free_image(croppedObject);
+                printf("Saved\n");
                 free(copy);
+                free_image(croppedObject);
             }
         }
     }
