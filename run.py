@@ -6,8 +6,8 @@ import os
 model = 1   # 1: YOLO
             # 2: tiny-YOLO
 inputDirectory = "./input"
-outputDirectory = "./out3/"
-confThresh = 0.25   # Confidence rate threshols
+outputDirectory = "./out/"
+confThresh = 0.3   # Confidence rate threshols
 
 # Create the output directory if does not exist
 if not os.path.exists(outputDirectory):
